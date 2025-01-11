@@ -94,7 +94,7 @@ class TestRpg(unittest.TestCase):
     
     @patch('builtins.input', side_effect=['nain'])
     def test_choix_classe_nain(self, mock_input):
-        #personnage = choisir_classe()
+        personnage = choisir_classe()
         self.assertIsInstance(personnage, Nain)
     
 
