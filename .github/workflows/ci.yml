@@ -1,0 +1,77 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - dev  # Écoute les pushs sur la branche dev
+
+jobs:
+  ci-build-and-merge:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout du code
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Important pour les opérations git
+          repository: Elfi-11/Exo_Projet_CI
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Configuration Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # 3. Installer les dépendances
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      # 4. Définir le chemin source
+      - name: Set PYTHONPATH
+        run: |
+          echo "PYTHONPATH=$PWD/src" >> $GITHUB_ENV
+
+      # 5. Lancer les tests
+      - name: Run tests
+        id: run-tests
+        continue-on-error: true  # Permet de continuer même en cas d'échec
+        run: |
+          python -m unittest discover -s test -p "*.py"
+
+      # 6. Merge dev dans main si les tests réussissent
+      - name: Merge dev into main
+        if: steps.run-tests.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git merge dev --ff-only  # Force le fast-forward
+          git push origin main
+
+      # 7. Gérer les échecs
+      - name: Handle failure
+        if: steps.run-tests.outcome == 'failure'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          UNIQUE_ID=$(date +%Y%m%d_%H%M%S)
+          BRANCH_NAME="failures/${UNIQUE_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Créer et pousser la branche d'échec
+          git checkout -b $BRANCH_NAME
+          git push origin $BRANCH_NAME
+          
+          # Retour sur dev et reset
+          git checkout dev
+          git reset --hard HEAD~1
+          git push --force origin dev 

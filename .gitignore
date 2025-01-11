@@ -1,0 +1,4 @@
+fr_env/
+__pycache__/
+.pytest_cache/
+elfi_env/
