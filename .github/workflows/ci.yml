@@ -51,6 +51,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Elfi-11/Exo_Projet_CI.git
           git fetch origin main
           git checkout main
           git merge dev --ff-only  # Force le fast-forward
