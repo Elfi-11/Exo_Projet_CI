@@ -63,5 +63,7 @@ Le lien pour la création d'une pull request est fourni, permettant de gérer le
 Avantages du système CI/CD
 
 Automatisation : Le processus est entièrement automatisé, permettant de valider le code sans intervention manuelle et de détecter rapidement les erreurs.
+
 Stabilité de la branche main : Grâce au système de tests et à la fusion contrôlée, la branche main reste toujours stable et prête à être déployée.
+
 Gestion des erreurs simplifiée : En cas d'échec des tests, le pipeline crée une branche dédiée pour isoler et corriger l'erreur sans perturber le flux de développement sur dev

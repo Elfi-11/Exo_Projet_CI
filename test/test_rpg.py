@@ -96,9 +96,32 @@ class TestRpg(unittest.TestCase):
     def test_choix_classe_nain(self, mock_input):
         personnage = choisir_classe()
         self.assertIsInstance(personnage, Nain)
-    
 
+    @patch('random.randint')
+    def test_attaque_critique(self, mock_randint):
+        # Simulation d'attaques critiques
+        mock_randint.side_effect = [3, 3, 4, 4, 2, 2, 1, 1, 3, 3]  
 
+        guerrier = Guerrier()
+        mage = Mage()
+        archer = Archer()
+        nain = Nain()
+
+        # Test de l'attaque du Guerrier sur un Mage
+        guerrier.attaquer(mage)
+        self.assertGreater(mage.get_hp(), 0)
+
+        # Test de l'attaque du Mage sur un Guerrier
+        mage.attaquer(guerrier)
+        self.assertGreater(guerrier.get_hp(), 0)
+
+        # Test de l'attaque de l'archer sur un Mage
+        archer.attaquer(mage)
+        self.assertGreater(mage.get_hp(), 0)
+
+        # Test de l'attaque du Nain sur un Guerrier
+        nain.attaquer(guerrier)
+        self.assertGreater(guerrier.get_hp(), 0)
 
 if __name__ == '__main__':
     unittest.main()
