@@ -102,7 +102,11 @@ class TestRpg(unittest.TestCase):
         # Simulation d'attaques critiques
         mock_randint.side_effect = [3, 3, 4, 4, 2, 2, 1, 1, 3, 3]  
 
-        
+        guerrier = Guerrier()
+        mage = Mage()
+        archer = Archer()
+        nain = Nain()
+
         # Test de l'attaque du Guerrier sur un Mage
         guerrier.attaquer(mage)
         self.assertGreater(mage.get_hp(), 0)
